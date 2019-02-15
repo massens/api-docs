@@ -271,6 +271,15 @@
       <div class="content">
         <h1 id='introduction'>Introduction</h1>
 <p>Welcome to the HappyScribe API!</p>
+
+<p>Using this API, you can programmatically submit files to be transcribed by HappyScribe.<br>
+You can also access existing transcriptions and export them to various formats.</p>
+
+<p>We try to be a RESTfull API, using appropriate resource names and verbs.<br>
+Our API is versioned where breaking changes are released as incremental versions.<br>
+We&#39;ll try our best not to relase versions too often, and to reasonably support legacy versions ✌️.</p>
+
+<p>If you have any questions, please write to us at <a href="mailto:dev@happyscribe.co">dev@happyscribe.co</a>. We&#39;d love to hear from you 🙈</p>
 <h1 id='authentication'>Authentication</h1>
 <blockquote>
 <p>To authorize, use this code:</p>
@@ -619,11 +628,8 @@ For uploading files directly to our sever, please see the section titled <a href
 <span class="p">})</span>
 <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">res</span> <span class="o">=&gt;</span> <span class="nx">res</span><span class="p">.</span><span class="nx">text</span><span class="p">())</span>
 </code></pre>
-<blockquote>
-<p>The above command returns a binary data stream.</p>
-</blockquote>
-
-<p>This endpoint generates a transcription export.</p>
+<p>This endpoint generates a transcription export.
+Exports are sent to the client as binary data. You&#39;ll need to capture the output and save it to your local filesystem.</p>
 <h3 id='http-request-4'>HTTP Request</h3>
 <p><code>GET https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt</code></p>
 <h3 id='query-parameters-2'>Query Parameters</h3>
