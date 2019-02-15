@@ -227,10 +227,24 @@
             <a href="#authentication" class="toc-h1 toc-link" data-title="Authentication">Authentication</a>
           </li>
           <li>
+            <a href="#uploads" class="toc-h1 toc-link" data-title="Uploads">Uploads</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#uploading-media-files" class="toc-h2 toc-link" data-title="Uploading Media Files">Uploading Media Files</a>
+                  </li>
+                  <li>
+                    <a href="#multipart-uploads" class="toc-h2 toc-link" data-title="Multipart Uploads">Multipart Uploads</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
             <a href="#transcriptions" class="toc-h1 toc-link" data-title="Transcriptions">Transcriptions</a>
               <ul class="toc-list-h2">
                   <li>
                     <a href="#get-all-transcriptions" class="toc-h2 toc-link" data-title="Get All Transcriptions">Get All Transcriptions</a>
+                  </li>
+                  <li>
+                    <a href="#create-a-new-transcription" class="toc-h2 toc-link" data-title="Create a New Transcription">Create a New Transcription</a>
                   </li>
                   <li>
                     <a href="#get-a-specific-transcription" class="toc-h2 toc-link" data-title="Get a Specific Transcription">Get a Specific Transcription</a>
@@ -242,6 +256,9 @@
           </li>
           <li>
             <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
+          </li>
+          <li>
+            <a href="#languages" class="toc-h1 toc-link" data-title="Languages">Languages</a>
           </li>
       </ul>
         <ul class="toc-footer">
@@ -259,7 +276,7 @@
 <p>To authorize, use this code:</p>
 </blockquote>
 <pre class="highlight shell tab-shell"><code><span class="c"># With shell, you can just pass the correct header with each request</span>
-curl <span class="s2">"https://happyscribe.co/api/v1/"</span>
+curl <span class="s2">"https://happyscribe.co/api/v1/"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span>
 </code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
@@ -280,7 +297,96 @@ curl <span class="s2">"https://happyscribe.co/api/v1/"</span>
 <aside class="notice">
 You must replace <code>**your_api_key_here**</code> with your personal API key.
 </aside>
-<h1 id='transcriptions'>Transcriptions</h1><h2 id='get-all-transcriptions'>Get All Transcriptions</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions"</span>
+<h1 id='uploads'>Uploads</h1>
+<p>When creating a transcript, a media file URL (accessible to our servers) must be provided.<br>
+This can be a publicly accessible URL hosted by yourselves or a third-party.<br>
+Alternatively, you can upload files directly to our S3 bucket and create the transcription using the returned URL.  </p>
+
+<p>To upload files to our AWS S3 bucket, you must first request a signed URL using the endpoints below.<br>
+Once you have the signed URL, you can upload files as you would to any AWS S3 bucket.  </p>
+
+<p>We provide two types of signed URLs:</p>
+
+<ul>
+<li>URL for PUTing files as a binary data type</li>
+<li>URL for POSTing files as multipart form-data</li>
+</ul>
+
+<p>Depending which type of upload you require, you should request a signed URL from one of these two endpoints:</p>
+<h2 id='uploading-media-files'>Uploading Media Files</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/uploads/new?filename=my_media.mp3"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span>
+
+</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/uploads/new?filename=my_media.mp3'</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">authorization</span><span class="p">:</span> <span class="s1">'Bearer **your_api_key_here**'</span><span class="p">,</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"signedUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happy-scribe-domain.s3.eu-west-1.amazonaws.com/xxxxxx?x-amx-signature=xxxxx..."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>This endpoint returns a signed URL which can be used to make PUT requests to our S3 bucket.<br>
+More information here: <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/PresignedUrlUploadObject.html">https://docs.aws.amazon.com/AmazonS3/latest/dev/PresignedUrlUploadObject.html</a>  </p>
+
+<p>Once the file is uploaded, this same url should be used as the <code>tmp_url</code> when creating the associated transcription.</p>
+<h3 id='http-request'>HTTP Request</h3>
+<p><code>GET https://happyscribe.co/api/v1/uploads/new</code></p>
+<h3 id='parameters'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>filename</td>
+<td>(required) The filename and extension of the media file (e.g. <code>my_media.mp3</code>)</td>
+</tr>
+</tbody></table>
+<h2 id='multipart-uploads'>Multipart Uploads</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/uploads/new?multipart=true"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span>
+
+</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/uploads/new?multipart=true'</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">authorization</span><span class="p">:</span> <span class="s1">'Bearer **your_api_key_here**'</span><span class="p">,</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happy-scribe-domain.s3.eu-west-1.amazonaws.com"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"form_fields"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"x-amz-signature"</span><span class="p">:</span><span class="w"> </span><span class="s2">"xxxxxx"</span><span class="p">,</span><span class="w">
+    </span><span class="err">//</span><span class="w"> </span><span class="err">...other</span><span class="w"> </span><span class="err">form</span><span class="w"> </span><span class="err">fields</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>This endpoint returns a URL and form fields which can be used to POST multipart uploads to our S3 bucket.<br>
+More information here: <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html">https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html</a></p>
+
+<p>Once the file is uploaded, S3 will respond with a URL in the XML body, as well as in the headers.<br>
+You should use this URL as the <code>tmp_url</code> when creating the associated transcription.  </p>
+<h3 id='http-request-2'>HTTP Request</h3>
+<p><code>GET https://happyscribe.co/api/v1/uploads/new</code></p>
+<h3 id='parameters-2'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>multipart</td>
+<td>(required) should be set to <code>true</code></td>
+</tr>
+</tbody></table>
+<h1 id='transcriptions'>Transcriptions</h1><h2 id='get-all-transcriptions'>Get All Transcriptions</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span>
 </code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/transcriptions'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
@@ -298,16 +404,28 @@ You must replace <code>**your_api_key_here**</code> with your personal API key.
             </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"interview1.mov"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-10-29T14:31:29.799Z"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-10-29T14:31:38.495Z"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"editorUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/transcriptions/e458099e7f8da149625854b5a7b6a026917ad306/edit_v2"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"sharingEnabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+            </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"automatic_done"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"sharingEnabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en-GB"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+              </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://localhost:3000/api/v1/transcriptions/e458099e7f8da149625854b5a7b6a026917ad306"</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">}</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="p">{</span><span class="w">
             </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"9josdjdfo09j309omsldknslkjndfjknsdfs"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"interview2.mov"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-10-29T14:31:29.799Z"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-10-29T14:31:38.495Z"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"editorUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/transcriptions/9josdjdfo09j309omsldknslkjndfjknsdfs/edit_v2"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"sharingEnabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+            </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"automatic_done"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"sharingEnabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en-GB"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+              </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://localhost:3000/api/v1/transcriptions/9josdjdfo09j309omsldknslkjndfjknsdfs"</span><span class="w">
+              </span><span class="p">}</span><span class="w">
+            </span><span class="p">}</span><span class="w">
         </span><span class="p">},</span><span class="w">
     </span><span class="p">],</span><span class="w">
     </span><span class="s2">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
@@ -340,7 +458,87 @@ You must replace <code>**your_api_key_here**</code> with your personal API key.
 <aside class="success">
 Remember — a happy scribe is an authenticated scribe!
 </aside>
-<h2 id='get-a-specific-transcription'>Get a Specific Transcription</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;"</span>
+<h2 id='create-a-new-transcription'>Create a New Transcription</h2><pre class="highlight shell tab-shell"><code>curl -X POST <span class="s2">"https://happyscribe.co/api/v1/transcriptions"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+  -d <span class="s1">'{
+    "transcription": {
+        "name": "My Interview",
+        "language": "en-GB",
+        "tmp_url": "https://example.com/my_media.mp3"
+      }
+    }'</span>
+
+</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/transcriptions'</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">method</span><span class="p">:</span> <span class="s1">'POST'</span><span class="p">,</span>
+  <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">authorization</span><span class="p">:</span> <span class="s1">'Bearer **your_api_key_here**'</span><span class="p">,</span>
+    <span class="s1">'content-type'</span><span class="p">:</span> <span class="s1">'application/json'</span><span class="p">,</span>
+  <span class="p">},</span>
+  <span class="na">body</span><span class="p">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+    <span class="na">transcription</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">name</span><span class="p">:</span> <span class="s1">'My Interview'</span><span class="p">,</span>
+      <span class="na">lanugage</span><span class="p">:</span> <span class="s1">'en-GB'</span><span class="p">,</span>
+      <span class="na">tmp_url</span><span class="p">:</span> <span class="s1">'https://example.com/my_media.mp3'</span><span class="p">,</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+<span class="p">})</span>
+</code></pre>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"9josdjdfo09j309omsldknslkjndfjknsdfs"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Interview"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-10-29T14:31:29.799Z"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-10-29T14:31:38.495Z"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"sharingEnabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ingesting"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en-GB"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://localhost:3000/api/v1/transcriptions/f6511f81156114aede28dc85325a796ae7996d11"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>This endpoint creates a new transcription.</p>
+<h3 id='http-request-2'>HTTP Request</h3>
+<p><code>POST https://happyscribe.co/api/v1/transcriptions</code></p>
+<h3 id='parameters'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>name</td>
+<td>String</td>
+<td>(required) Name of the transcription</td>
+</tr>
+<tr>
+<td>language</td>
+<td>String</td>
+<td>(required) <a href="https://tools.ietf.org/html/bcp47">BCP-47</a> language code. Full list <a href="/#languages">here</a></td>
+</tr>
+<tr>
+<td>tmp_url</td>
+<td>String</td>
+<td>(required) A url where the media file is located and can be copied to our server.</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">
+The media file <code>tmp_url</code> must be publicly acessible during the ingestion process, otherwise our server won't be able to make a copy of it.<br/>
+Once the file is copied and ingested, we no longer need access to the <code>tmp_url</code> and the file can be safely deleted.
+</aside>
+
+<aside class="success">
+For uploading files directly to our sever, please see the section titled <a href="/#uploads">Uploads</a>
+</aside>
+<h2 id='get-a-specific-transcription'>Get a Specific Transcription</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span>
 </code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
@@ -356,24 +554,64 @@ Remember — a happy scribe is an authenticated scribe!
   </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"interview2.mov"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-10-29T14:31:29.799Z"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-10-29T14:31:38.495Z"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"editorUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/transcriptions/9josdjdfo09j309omsldknslkjndfjknsdfs/edit_v2"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"sharingEnabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"automatic_done"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en-GB"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://localhost:3000/api/v1/transcriptions/f6511f81156114aede28dc85325a796ae7996d11"</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://localhost:3000/api/v1/transcriptions/f6511f81156114aede28dc85325a796ae7996d11"</span><span class="w">
     </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"newExport"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://localhost:3000/api/v1/transcriptions/f6511f81156114aede28dc85325a796ae7996d11/exports/new"</span><span class="w">
+    </span><span class="s2">"editor"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/transcriptions/9josdjdfo09j309omsldknslkjndfjknsdfs/edit_v2"</span><span class="p">,</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"export"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">  
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://localhost:3000/api/v1/transcriptions/f6511f81156114aede28dc85325a796ae7996d11/exports/new"</span><span class="w">
     </span><span class="p">},</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint retrieves a specific transcription.</p>
-<h3 id='http-request-2'>HTTP Request</h3>
+<h3 id='http-request-3'>HTTP Request</h3>
 <p><code>GET https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;</code></p>
-<h2 id='get-a-transcription-export'>Get a Transcription Export</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt"</span>
-  -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span>
-  --output my_export.pdf
+<h3 id='transcription-state-descriptions'>Transcription State Descriptions</h3>
+<table><thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>ingesting</code></td>
+<td>Media file is being ingested</td>
+</tr>
+<tr>
+<td><code>automatic_transcribing</code></td>
+<td>Audio is being transcribed to text</td>
+</tr>
+<tr>
+<td><code>automatic_done</code></td>
+<td>Transcription is finished</td>
+</tr>
+<tr>
+<td><code>aligning</code></td>
+<td>Text is being realigned with the audio</td>
+</tr>
+<tr>
+<td><code>locked</code></td>
+<td>Transcription is locked due to insuffient credits</td>
+</tr>
+<tr>
+<td><code>failed</code></td>
+<td>File failed to process</td>
+</tr>
+<tr>
+<td><code>demo</code></td>
+<td>The initial demo file</td>
+</tr>
+</tbody></table>
+<h2 id='get-a-transcription-export'>Get a Transcription Export</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span> <span class="se">\</span>
+  --output my_export.txt
 </code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">authorization</span><span class="p">:</span> <span class="s1">'Bearer **your_api_key_here**'</span>
@@ -386,7 +624,7 @@ Remember — a happy scribe is an authenticated scribe!
 </blockquote>
 
 <p>This endpoint generates a transcription export.</p>
-<h3 id='http-request-3'>HTTP Request</h3>
+<h3 id='http-request-4'>HTTP Request</h3>
 <p><code>GET https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt</code></p>
 <h3 id='query-parameters-2'>Query Parameters</h3>
 <table><thead>
@@ -404,22 +642,22 @@ Remember — a happy scribe is an authenticated scribe!
 <tr>
 <td>timestamp</td>
 <td>false</td>
-<td>Export should include timestamps (only formats: <code>txt</code>, <code>docx</code>, <code>pdf</code> )</td>
+<td>Include timestamps (only formats: <code>txt</code>, <code>docx</code>, <code>pdf</code> )</td>
 </tr>
 <tr>
 <td>speaker</td>
 <td>false</td>
-<td>Export should include speaker labels (only formats: <code>txt</code>, <code>docx</code>, <code>pdf</code> )</td>
+<td>Include speaker labels (only formats: <code>txt</code>, <code>docx</code>, <code>pdf</code> )</td>
 </tr>
 <tr>
 <td>comments</td>
 <td>false</td>
-<td>Export should include comments (only formats: <code>txt</code>, <code>docx</code>, <code>pdf</code> )</td>
+<td>Include comments (only formats: <code>txt</code>, <code>docx</code>, <code>pdf</code> )</td>
 </tr>
 <tr>
 <td>highlights</td>
 <td>false</td>
-<td>Export should include highlights (only formats: <code>docx</code>, <code>pdf</code> )</td>
+<td>Include highlights (only formats: <code>docx</code>, <code>pdf</code> )</td>
 </tr>
 </tbody></table>
 <h3 id='export-formats'>Export formats</h3>
@@ -518,6 +756,492 @@ Remember — a happy scribe is an authenticated scribe!
 <tr>
 <td>503</td>
 <td>Service Unavailable -- We&#39;re temporarily offline for maintenance. Please try again later.</td>
+</tr>
+</tbody></table>
+<h1 id='languages'>Languages</h1>
+<p>We support the following languages, by their <a href="https://tools.ietf.org/html/bcp47https://tools.ietf.org/html/bcp47">IETF BCP-47</a> language codes:</p>
+
+<table><thead>
+<tr>
+<th>Code</th>
+<th>Language</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>af-ZA</code></td>
+<td>Afrikaans (South Africa)</td>
+</tr>
+<tr>
+<td><code>am-ET</code></td>
+<td>Amharic (Ethiopia)</td>
+</tr>
+<tr>
+<td><code>ar-DZ</code></td>
+<td>Arabic (Algeria)</td>
+</tr>
+<tr>
+<td><code>ar-BH</code></td>
+<td>Arabic (Bahrain)</td>
+</tr>
+<tr>
+<td><code>ar-EG</code></td>
+<td>Arabic (Egypt)</td>
+</tr>
+<tr>
+<td><code>ar-IQ</code></td>
+<td>Arabic (Iraq)</td>
+</tr>
+<tr>
+<td><code>ar-IL</code></td>
+<td>Arabic (Israel)</td>
+</tr>
+<tr>
+<td><code>ar-JO</code></td>
+<td>Arabic (Jordan)</td>
+</tr>
+<tr>
+<td><code>ar-KW</code></td>
+<td>Arabic (Kuwait)</td>
+</tr>
+<tr>
+<td><code>ar-LB</code></td>
+<td>Arabic (Lebanon)</td>
+</tr>
+<tr>
+<td><code>ar-MA</code></td>
+<td>Arabic (Morocco)</td>
+</tr>
+<tr>
+<td><code>ar-OM</code></td>
+<td>Arabic (Oman)</td>
+</tr>
+<tr>
+<td><code>ar-QA</code></td>
+<td>Arabic (Qatar)</td>
+</tr>
+<tr>
+<td><code>ar-SA</code></td>
+<td>Arabic (Saudi Arabia)</td>
+</tr>
+<tr>
+<td><code>ar-PS</code></td>
+<td>Arabic (State of Palestine)</td>
+</tr>
+<tr>
+<td><code>ar-TN</code></td>
+<td>Arabic (Tunisia)</td>
+</tr>
+<tr>
+<td><code>ar-AE</code></td>
+<td>Arabic (United Arab Emirates)</td>
+</tr>
+<tr>
+<td><code>hy-AM</code></td>
+<td>Armenian (Armenia)</td>
+</tr>
+<tr>
+<td><code>az-AZ</code></td>
+<td>Azerbaijani (Azerbaijan)</td>
+</tr>
+<tr>
+<td><code>eu-ES</code></td>
+<td>Basque (Spain)</td>
+</tr>
+<tr>
+<td><code>bn-BD</code></td>
+<td>Bengali (Bangladesh)</td>
+</tr>
+<tr>
+<td><code>bn-IN</code></td>
+<td>Bengali (India)</td>
+</tr>
+<tr>
+<td><code>bg-BG</code></td>
+<td>Bulgarian (Bulgaria)</td>
+</tr>
+<tr>
+<td><code>ca-ES</code></td>
+<td>Catalan (Spain)</td>
+</tr>
+<tr>
+<td><code>yue-Hant-HK</code></td>
+<td>Chinese, Cantonese (Traditional, Hong Kong)</td>
+</tr>
+<tr>
+<td><code>cmn-Hans-CN</code></td>
+<td>Chinese, Mandarin (Simplified, China)</td>
+</tr>
+<tr>
+<td><code>cmn-Hans-HK</code></td>
+<td>Chinese, Mandarin (Simplified, Hong Kong)</td>
+</tr>
+<tr>
+<td><code>cmn-Hant-TW</code></td>
+<td>Chinese, Mandarin (Traditional, Taiwan)</td>
+</tr>
+<tr>
+<td><code>hr-HR</code></td>
+<td>Croatian (Croatia)</td>
+</tr>
+<tr>
+<td><code>cs-CZ</code></td>
+<td>Czech (Czech Republic)</td>
+</tr>
+<tr>
+<td><code>da-DK</code></td>
+<td>Danish (Denmark)</td>
+</tr>
+<tr>
+<td><code>nl-NL</code></td>
+<td>Dutch (Netherlands)</td>
+</tr>
+<tr>
+<td><code>en-AU</code></td>
+<td>English (Australia)</td>
+</tr>
+<tr>
+<td><code>en-CA</code></td>
+<td>English (Canada)</td>
+</tr>
+<tr>
+<td><code>en-GH</code></td>
+<td>English (Ghana)</td>
+</tr>
+<tr>
+<td><code>en-IN</code></td>
+<td>English (India)</td>
+</tr>
+<tr>
+<td><code>en-IE</code></td>
+<td>English (Ireland)</td>
+</tr>
+<tr>
+<td><code>en-KE</code></td>
+<td>English (Kenya)</td>
+</tr>
+<tr>
+<td><code>en-NZ</code></td>
+<td>English (New Zealand)</td>
+</tr>
+<tr>
+<td><code>en-NG</code></td>
+<td>English (Nigeria)</td>
+</tr>
+<tr>
+<td><code>en-PH</code></td>
+<td>English (Philippines)</td>
+</tr>
+<tr>
+<td><code>en-ZA</code></td>
+<td>English (South Africa)</td>
+</tr>
+<tr>
+<td><code>en-TZ</code></td>
+<td>English (Tanzania)</td>
+</tr>
+<tr>
+<td><code>en-GB</code></td>
+<td>English (United Kingdom)</td>
+</tr>
+<tr>
+<td><code>en-US</code></td>
+<td>English (United States)</td>
+</tr>
+<tr>
+<td><code>fil-PH</code></td>
+<td>Filipino (Philippines)</td>
+</tr>
+<tr>
+<td><code>fi-FI</code></td>
+<td>Finnish (Finland)</td>
+</tr>
+<tr>
+<td><code>fr-CA</code></td>
+<td>French (Canada)</td>
+</tr>
+<tr>
+<td><code>fr-FR</code></td>
+<td>French (France)</td>
+</tr>
+<tr>
+<td><code>gl-ES</code></td>
+<td>Galician (Spain)</td>
+</tr>
+<tr>
+<td><code>ka-GE</code></td>
+<td>Georgian (Georgia)</td>
+</tr>
+<tr>
+<td><code>de-DE</code></td>
+<td>German (Germany)</td>
+</tr>
+<tr>
+<td><code>el-GR</code></td>
+<td>Greek (Greece)</td>
+</tr>
+<tr>
+<td><code>gu-IN</code></td>
+<td>Gujarati (India)</td>
+</tr>
+<tr>
+<td><code>he-IL</code></td>
+<td>Hebrew (Israel)</td>
+</tr>
+<tr>
+<td><code>hi-IN</code></td>
+<td>Hindi (India)</td>
+</tr>
+<tr>
+<td><code>hu-HU</code></td>
+<td>Hungarian (Hungary)</td>
+</tr>
+<tr>
+<td><code>is-IS</code></td>
+<td>Icelandic (Iceland)</td>
+</tr>
+<tr>
+<td><code>id-ID</code></td>
+<td>Indonesian (Indonesia)</td>
+</tr>
+<tr>
+<td><code>it-IT</code></td>
+<td>Italian (Italy)</td>
+</tr>
+<tr>
+<td><code>ja-JP</code></td>
+<td>Japanese (Japan)</td>
+</tr>
+<tr>
+<td><code>jv-ID</code></td>
+<td>Javanese (Indonesia)</td>
+</tr>
+<tr>
+<td><code>kn-IN</code></td>
+<td>Kannada (India)</td>
+</tr>
+<tr>
+<td><code>km-KH</code></td>
+<td>Khmer (Cambodia)</td>
+</tr>
+<tr>
+<td><code>ko-KR</code></td>
+<td>Korean (South Korea)</td>
+</tr>
+<tr>
+<td><code>lo-LA</code></td>
+<td>Lao (Laos)</td>
+</tr>
+<tr>
+<td><code>lv-LV</code></td>
+<td>Latvian (Latvia)</td>
+</tr>
+<tr>
+<td><code>lt-LT</code></td>
+<td>Lithuanian (Lithuania)</td>
+</tr>
+<tr>
+<td><code>ms-MY</code></td>
+<td>Malay (Malaysia)</td>
+</tr>
+<tr>
+<td><code>ml-IN</code></td>
+<td>Malayalam (India)</td>
+</tr>
+<tr>
+<td><code>mr-IN</code></td>
+<td>Marathi (India)</td>
+</tr>
+<tr>
+<td><code>ne-NP</code></td>
+<td>Nepali (Nepal)</td>
+</tr>
+<tr>
+<td><code>nb-NO</code></td>
+<td>Norwegian Bokmål (Norway)</td>
+</tr>
+<tr>
+<td><code>fa-IR</code></td>
+<td>Persian (Iran)</td>
+</tr>
+<tr>
+<td><code>pl-PL</code></td>
+<td>Polish (Poland)</td>
+</tr>
+<tr>
+<td><code>pt-BR</code></td>
+<td>Portuguese (Brazil)</td>
+</tr>
+<tr>
+<td><code>pt-PT</code></td>
+<td>Portuguese (Portugal)</td>
+</tr>
+<tr>
+<td><code>ro-RO</code></td>
+<td>Romanian (Romania)</td>
+</tr>
+<tr>
+<td><code>ru-RU</code></td>
+<td>Russian (Russia)</td>
+</tr>
+<tr>
+<td><code>sr-RS</code></td>
+<td>Serbian (Serbia)</td>
+</tr>
+<tr>
+<td><code>si-LK</code></td>
+<td>Sinhala (Srilanka)</td>
+</tr>
+<tr>
+<td><code>sk-SK</code></td>
+<td>Slovak (Slovakia)</td>
+</tr>
+<tr>
+<td><code>sl-SI</code></td>
+<td>Slovenian (Slovenia)</td>
+</tr>
+<tr>
+<td><code>es-AR</code></td>
+<td>Spanish (Argentina)</td>
+</tr>
+<tr>
+<td><code>es-BO</code></td>
+<td>Spanish (Bolivia)</td>
+</tr>
+<tr>
+<td><code>es-CL</code></td>
+<td>Spanish (Chile)</td>
+</tr>
+<tr>
+<td><code>es-CO</code></td>
+<td>Spanish (Colombia)</td>
+</tr>
+<tr>
+<td><code>es-CR</code></td>
+<td>Spanish (Costa Rica)</td>
+</tr>
+<tr>
+<td><code>es-DO</code></td>
+<td>Spanish (Dominican Republic)</td>
+</tr>
+<tr>
+<td><code>es-EC</code></td>
+<td>Spanish (Ecuador)</td>
+</tr>
+<tr>
+<td><code>es-SV</code></td>
+<td>Spanish (El Salvador)</td>
+</tr>
+<tr>
+<td><code>es-GT</code></td>
+<td>Spanish (Guatemala)</td>
+</tr>
+<tr>
+<td><code>es-HN</code></td>
+<td>Spanish (Honduras)</td>
+</tr>
+<tr>
+<td><code>es-MX</code></td>
+<td>Spanish (Mexico)</td>
+</tr>
+<tr>
+<td><code>es-NI</code></td>
+<td>Spanish (Nicaragua)</td>
+</tr>
+<tr>
+<td><code>es-PA</code></td>
+<td>Spanish (Panama)</td>
+</tr>
+<tr>
+<td><code>es-PY</code></td>
+<td>Spanish (Paraguay)</td>
+</tr>
+<tr>
+<td><code>es-PE</code></td>
+<td>Spanish (Peru)</td>
+</tr>
+<tr>
+<td><code>es-PR</code></td>
+<td>Spanish (Puerto Rico)</td>
+</tr>
+<tr>
+<td><code>es-ES</code></td>
+<td>Spanish (Spain)</td>
+</tr>
+<tr>
+<td><code>es-US</code></td>
+<td>Spanish (United States)</td>
+</tr>
+<tr>
+<td><code>es-UY</code></td>
+<td>Spanish (Uruguay)</td>
+</tr>
+<tr>
+<td><code>es-VE</code></td>
+<td>Spanish (Venezuela)</td>
+</tr>
+<tr>
+<td><code>su-ID</code></td>
+<td>Sundanese (Indonesia)</td>
+</tr>
+<tr>
+<td><code>sw-KE</code></td>
+<td>Swahili (Kenya)</td>
+</tr>
+<tr>
+<td><code>sw-TZ</code></td>
+<td>Swahili (Tanzania)</td>
+</tr>
+<tr>
+<td><code>sv-SE</code></td>
+<td>Swedish (Sweden)</td>
+</tr>
+<tr>
+<td><code>ta-IN</code></td>
+<td>Tamil (India)</td>
+</tr>
+<tr>
+<td><code>ta-MY</code></td>
+<td>Tamil (Malaysia)</td>
+</tr>
+<tr>
+<td><code>ta-SG</code></td>
+<td>Tamil (Singapore)</td>
+</tr>
+<tr>
+<td><code>ta-LK</code></td>
+<td>Tamil (Sri Lanka)</td>
+</tr>
+<tr>
+<td><code>te-IN</code></td>
+<td>Telugu (India)</td>
+</tr>
+<tr>
+<td><code>th-TH</code></td>
+<td>Thai (Thailand)</td>
+</tr>
+<tr>
+<td><code>tr-TR</code></td>
+<td>Turkish (Turkey)</td>
+</tr>
+<tr>
+<td><code>uk-UA</code></td>
+<td>Ukrainian (Ukraine)</td>
+</tr>
+<tr>
+<td><code>ur-IN</code></td>
+<td>Urdu (India)</td>
+</tr>
+<tr>
+<td><code>ur-PK</code></td>
+<td>Urdu (Pakistan)</td>
+</tr>
+<tr>
+<td><code>vi-VN</code></td>
+<td>Vietnamese (Vietnam)</td>
+</tr>
+<tr>
+<td><code>zu-ZA</code></td>
+<td>Zulu (South Africa)</td>
 </tr>
 </tbody></table>
 
