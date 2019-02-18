@@ -230,7 +230,7 @@
             <a href="#uploads" class="toc-h1 toc-link" data-title="Uploads">Uploads</a>
               <ul class="toc-list-h2">
                   <li>
-                    <a href="#uploading-media-files" class="toc-h2 toc-link" data-title="Uploading Media Files">Uploading Media Files</a>
+                    <a href="#binary-data-file-upload" class="toc-h2 toc-link" data-title="Binary Data File Upload">Binary Data File Upload</a>
                   </li>
                   <li>
                     <a href="#multipart-uploads" class="toc-h2 toc-link" data-title="Multipart Uploads">Multipart Uploads</a>
@@ -241,16 +241,16 @@
             <a href="#transcriptions" class="toc-h1 toc-link" data-title="Transcriptions">Transcriptions</a>
               <ul class="toc-list-h2">
                   <li>
-                    <a href="#get-all-transcriptions" class="toc-h2 toc-link" data-title="Get All Transcriptions">Get All Transcriptions</a>
+                    <a href="#list-all-transcriptions" class="toc-h2 toc-link" data-title="List All Transcriptions">List All Transcriptions</a>
                   </li>
                   <li>
-                    <a href="#create-a-new-transcription" class="toc-h2 toc-link" data-title="Create a New Transcription">Create a New Transcription</a>
+                    <a href="#create-a-transcription" class="toc-h2 toc-link" data-title="Create a Transcription">Create a Transcription</a>
                   </li>
                   <li>
-                    <a href="#get-a-specific-transcription" class="toc-h2 toc-link" data-title="Get a Specific Transcription">Get a Specific Transcription</a>
+                    <a href="#retrieve-a-transcription" class="toc-h2 toc-link" data-title="Retrieve a Transcription">Retrieve a Transcription</a>
                   </li>
                   <li>
-                    <a href="#get-a-transcription-export" class="toc-h2 toc-link" data-title="Get a Transcription Export">Get a Transcription Export</a>
+                    <a href="#export-a-transcription" class="toc-h2 toc-link" data-title="Export a Transcription">Export a Transcription</a>
                   </li>
               </ul>
           </li>
@@ -277,7 +277,7 @@ You can also access existing transcriptions and export them to various formats.<
 
 <p>We try to be a RESTfull API, using appropriate resource names and verbs.<br>
 Our API is versioned where breaking changes are released as incremental versions.<br>
-We&#39;ll try our best not to relase versions too often, and to reasonably support legacy versions ✌️.</p>
+We&#39;ll try our best not to release versions too often, and to reasonably support legacy versions ✌️.</p>
 
 <p>If you have any questions, please write to us at <a href="mailto:dev@happyscribe.co">dev@happyscribe.co</a>. We&#39;d love to hear from you 🙈</p>
 <h1 id='authentication'>Authentication</h1>
@@ -297,9 +297,9 @@ curl <span class="s2">"https://happyscribe.co/api/v1/"</span> <span class="se">\
 <p>Make sure to replace <code>**your_api_key_here**</code> with your API key.</p>
 </blockquote>
 
-<p>HappyScribe uses API keys to allow access to the API. You can register a new API key by logging in and going to <a href="https://www.happyscribe.co/users/edit">settings</a> </p>
+<p>HappyScribe uses API keys to allow access to the API. You can get your API key by logging in and going to <a href="https://www.happyscribe.co/users/edit">settings</a> </p>
 
-<p>HappyScribe expects for the API key to be included in all API requests to the server in a header that looks like the following:</p>
+<p>HappyScribe expects the API key to be included in all API requests to the server in a header that looks like the following:</p>
 
 <p><code>Authorization: Bearer **your_api_key_here**&quot;</code></p>
 
@@ -307,9 +307,9 @@ curl <span class="s2">"https://happyscribe.co/api/v1/"</span> <span class="se">\
 You must replace <code>**your_api_key_here**</code> with your personal API key.
 </aside>
 <h1 id='uploads'>Uploads</h1>
-<p>When creating a transcript, a media file URL (accessible to our servers) must be provided.<br>
+<p>When creating a transcription, a media file URL (accessible to our servers) must be provided.<br>
 This can be a publicly accessible URL hosted by yourselves or a third-party.<br>
-Alternatively, you can upload files directly to our S3 bucket and create the transcription using the returned URL.  </p>
+Alternatively, you can upload files directly to our storage system (AWS S3 bucket) and create the transcription using the returned URL.  </p>
 
 <p>To upload files to our AWS S3 bucket, you must first request a signed URL using the endpoints below.<br>
 Once you have the signed URL, you can upload files as you would to any AWS S3 bucket.  </p>
@@ -317,12 +317,12 @@ Once you have the signed URL, you can upload files as you would to any AWS S3 bu
 <p>We provide two types of signed URLs:</p>
 
 <ul>
-<li>URL for PUTing files as a binary data type</li>
-<li>URL for POSTing files as multipart form-data</li>
+<li>Signed URL for PUTing files as a binary data type</li>
+<li>Signed URL for POSTing files as multipart form-data</li>
 </ul>
 
-<p>Depending which type of upload you require, you should request a signed URL from one of these two endpoints:</p>
-<h2 id='uploading-media-files'>Uploading Media Files</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/uploads/new?filename=my_media.mp3"</span> <span class="se">\</span>
+<p>Depending on which type of upload you require, you should request a signed URL from one of these two endpoints:</p>
+<h2 id='binary-data-file-upload'>Binary Data File Upload</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/uploads/new?filename=my_media.mp3"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span>
 
 </code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/uploads/new?filename=my_media.mp3'</span><span class="p">,</span> <span class="p">{</span>
@@ -341,7 +341,7 @@ Once you have the signed URL, you can upload files as you would to any AWS S3 bu
 <p>This endpoint returns a signed URL which can be used to make PUT requests to our S3 bucket.<br>
 More information here: <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/PresignedUrlUploadObject.html">https://docs.aws.amazon.com/AmazonS3/latest/dev/PresignedUrlUploadObject.html</a>  </p>
 
-<p>Once the file is uploaded, this same url should be used as the <code>tmp_url</code> when creating the associated transcription.</p>
+<p>Once the file is uploaded, this same url should be used as the <code>tmp_url</code> when <a href="#create-a-new-transcription">creating the associated transcription.</a></p>
 <h3 id='http-request'>HTTP Request</h3>
 <p><code>GET https://happyscribe.co/api/v1/uploads/new</code></p>
 <h3 id='parameters'>Parameters</h3>
@@ -380,7 +380,7 @@ More information here: <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/
 More information here: <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html">https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html</a></p>
 
 <p>Once the file is uploaded, S3 will respond with a URL in the XML body, as well as in the headers.<br>
-You should use this URL as the <code>tmp_url</code> when creating the associated transcription.  </p>
+You should use this URL as the <code>tmp_url</code> when <a href="#create-a-new-transcription">creating the associated transcription.</a>  </p>
 <h3 id='http-request-2'>HTTP Request</h3>
 <p><code>GET https://happyscribe.co/api/v1/uploads/new</code></p>
 <h3 id='parameters-2'>Parameters</h3>
@@ -395,7 +395,7 @@ You should use this URL as the <code>tmp_url</code> when creating the associated
 <td>(required) should be set to <code>true</code></td>
 </tr>
 </tbody></table>
-<h1 id='transcriptions'>Transcriptions</h1><h2 id='get-all-transcriptions'>Get All Transcriptions</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions"</span> <span class="se">\</span>
+<h1 id='transcriptions'>Transcriptions</h1><h2 id='list-all-transcriptions'>List All Transcriptions</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span>
 </code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/transcriptions'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
@@ -409,7 +409,7 @@ You should use this URL as the <code>tmp_url</code> when creating the associated
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
     </span><span class="s2">"results"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
         </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"e458099e7f8da149625854b5a7b6a026917ad306"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"e458099e7f8da14f9625854ba7b6a026917ad306"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"interview1.mov"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-10-29T14:31:29.799Z"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-10-29T14:31:38.495Z"</span><span class="p">,</span><span class="w">
@@ -418,12 +418,12 @@ You should use this URL as the <code>tmp_url</code> when creating the associated
             </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en-GB"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
               </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://localhost:3000/api/v1/transcriptions/e458099e7f8da149625854b5a7b6a026917ad306"</span><span class="w">
+                </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/api/v1/transcriptions/e458099e7f8da14f9625854ba7b6a026917ad306"</span><span class="w">
               </span><span class="p">}</span><span class="w">
             </span><span class="p">}</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="p">{</span><span class="w">
-            </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"9josdjdfo09j309omsldknslkjndfjknsdfs"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"9jossdjdf09j309omsldknslkjndfjknsdfs"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"interview2.mov"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-10-29T14:31:29.799Z"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-10-29T14:31:38.495Z"</span><span class="p">,</span><span class="w">
@@ -432,10 +432,11 @@ You should use this URL as the <code>tmp_url</code> when creating the associated
             </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en-GB"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
               </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://localhost:3000/api/v1/transcriptions/9josdjdfo09j309omsldknslkjndfjknsdfs"</span><span class="w">
+                </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/api/v1/transcriptions/9jossdjdf09j309omsldknslkjndfjknsdfs"</span><span class="w">
               </span><span class="p">}</span><span class="w">
             </span><span class="p">}</span><span class="w">
         </span><span class="p">},</span><span class="w">
+        </span><span class="err">...</span><span class="w">
     </span><span class="p">],</span><span class="w">
     </span><span class="s2">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
     </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -446,7 +447,7 @@ You should use this URL as the <code>tmp_url</code> when creating the associated
 </span><span class="p">}</span><span class="w">
 
 </span></code></pre>
-<p>This endpoint retrieves your transcriptions.</p>
+<p>Returns a list of transcriptions you’ve previously created. The transcriptions are returned in sorted order, with the most recent charges appearing first. The information returned is metadata about each transcription, not the actual transcript. To retrieve a specific transcript you have to use the <a href="#export-a-transcription">export endpoint</a>.</p>
 <h3 id='http-request'>HTTP Request</h3>
 <p><code>GET https://happyscribe.co/api/v1/transcriptions</code></p>
 <h3 id='query-parameters'>Query Parameters</h3>
@@ -467,7 +468,7 @@ You should use this URL as the <code>tmp_url</code> when creating the associated
 <aside class="success">
 Remember — a happy scribe is an authenticated scribe!
 </aside>
-<h2 id='create-a-new-transcription'>Create a New Transcription</h2><pre class="highlight shell tab-shell"><code>curl -X POST <span class="s2">"https://happyscribe.co/api/v1/transcriptions"</span> <span class="se">\</span>
+<h2 id='create-a-transcription'>Create a Transcription</h2><pre class="highlight shell tab-shell"><code>curl -X POST <span class="s2">"https://happyscribe.co/api/v1/transcriptions"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span> <span class="se">\</span>
   -H <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
   -d <span class="s1">'{
@@ -506,12 +507,12 @@ Remember — a happy scribe is an authenticated scribe!
   </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en-GB"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://localhost:3000/api/v1/transcriptions/f6511f81156114aede28dc85325a796ae7996d11"</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/api/v1/transcriptions/f6511f81s5611daede28dc85f25a796ae7996d11"</span><span class="w">
     </span><span class="p">},</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<p>This endpoint creates a new transcription.</p>
+<p>This endpoint creates a new transcription. After a transcription is created, the system will proceed to automatically transcribe it. You can watch if the transcription process has finished by <a href="#retrieve-a-transcription">retrieving a transcription</a>.</p>
 <h3 id='http-request-2'>HTTP Request</h3>
 <p><code>POST https://happyscribe.co/api/v1/transcriptions</code></p>
 <h3 id='parameters'>Parameters</h3>
@@ -535,19 +536,19 @@ Remember — a happy scribe is an authenticated scribe!
 <tr>
 <td>tmp_url</td>
 <td>String</td>
-<td>(required) A url where the media file is located and can be copied to our server.</td>
+<td>(required) A url where the media file is located and can be retrieved by our server.</td>
 </tr>
 </tbody></table>
 
 <aside class="notice">
-The media file <code>tmp_url</code> must be publicly acessible during the ingestion process, otherwise our server won't be able to make a copy of it.<br/>
+The media file <code>tmp_url</code> must be publicly accessible during the ingestion process, otherwise our server won't be able to make a copy of it.<br/>
 Once the file is copied and ingested, we no longer need access to the <code>tmp_url</code> and the file can be safely deleted.
 </aside>
 
 <aside class="success">
-For uploading files directly to our sever, please see the section titled <a href="/#uploads">Uploads</a>
+Before creating a transcription, your media file has to be uploaded. Refer to the <a href="/#uploads">uploads section</a> for uploading files directly to our server and other options.
 </aside>
-<h2 id='get-a-specific-transcription'>Get a Specific Transcription</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;"</span> <span class="se">\</span>
+<h2 id='retrieve-a-transcription'>Retrieve a Transcription</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span>
 </code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
@@ -568,18 +569,18 @@ For uploading files directly to our sever, please see the section titled <a href
   </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en-GB"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://localhost:3000/api/v1/transcriptions/f6511f81156114aede28dc85325a796ae7996d11"</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/api/v1/transcriptions/f6511f81156114aede28dc85325a796ae7996d11"</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"editor"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/transcriptions/9josdjdfo09j309omsldknslkjndfjknsdfs/edit_v2"</span><span class="p">,</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"export"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">  
-      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://localhost:3000/api/v1/transcriptions/f6511f81156114aede28dc85325a796ae7996d11/exports/new"</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/api/v1/transcriptions/f6511f81156114aede28dc85325a796ae7996d11/exports/new"</span><span class="w">
     </span><span class="p">},</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<p>This endpoint retrieves a specific transcription.</p>
+<p>This endpoint retrieves information about a specific transcription. To retrieve the transcript you have to use the <a href="#export-a-transcription">export endpoint</a>.</p>
 <h3 id='http-request-3'>HTTP Request</h3>
 <p><code>GET https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;</code></p>
 <h3 id='transcription-state-descriptions'>Transcription State Descriptions</h3>
@@ -599,7 +600,7 @@ For uploading files directly to our sever, please see the section titled <a href
 </tr>
 <tr>
 <td><code>automatic_done</code></td>
-<td>Transcription is finished</td>
+<td>Transcription is finished and ready to export!</td>
 </tr>
 <tr>
 <td><code>aligning</code></td>
@@ -607,7 +608,7 @@ For uploading files directly to our sever, please see the section titled <a href
 </tr>
 <tr>
 <td><code>locked</code></td>
-<td>Transcription is locked due to insuffient credits</td>
+<td>Transcription is locked due to insufficient credits</td>
 </tr>
 <tr>
 <td><code>failed</code></td>
@@ -618,7 +619,7 @@ For uploading files directly to our sever, please see the section titled <a href
 <td>The initial demo file</td>
 </tr>
 </tbody></table>
-<h2 id='get-a-transcription-export'>Get a Transcription Export</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt"</span> <span class="se">\</span>
+<h2 id='export-a-transcription'>Export a Transcription</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span> <span class="se">\</span>
   --output my_export.txt
 </code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt'</span><span class="p">,</span> <span class="p">{</span>
@@ -630,6 +631,10 @@ For uploading files directly to our sever, please see the section titled <a href
 </code></pre>
 <p>This endpoint generates a transcription export.
 Exports are sent to the client as binary data. You&#39;ll need to capture the output and save it to your local filesystem.</p>
+
+<aside class="notice">
+To export a transcription it must have the <code>state</code> = <code>automatic_done</code>. You can check the state by <a href="#retrieve-a-transcription">retrieving the transcription metadata</a>.
+</aside>
 <h3 id='http-request-4'>HTTP Request</h3>
 <p><code>GET https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt</code></p>
 <h3 id='query-parameters-2'>Query Parameters</h3>
