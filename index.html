@@ -296,9 +296,9 @@ We&#39;ll try our best not to release versions too often, and to reasonably supp
 <p>To authorize, use this code:</p>
 </blockquote>
 <pre class="highlight shell tab-shell"><code><span class="c"># With shell, you can just pass the correct header with each request</span>
-curl <span class="s2">"https://happyscribe.co/api/v1/"</span> <span class="se">\</span>
+curl <span class="s2">"https://www.happyscribe.co/api/v1/"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span>
-</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/'</span><span class="p">,</span> <span class="p">{</span>
+</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://www.happyscribe.co/api/v1/'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">authorization</span><span class="p">:</span> <span class="s1">'Bearer **your_api_key_here**'</span>
   <span class="p">}</span>
@@ -333,10 +333,10 @@ Once you have the signed URL, you can upload files as you would to any AWS S3 bu
 </ul>
 
 <p>Depending on which type of upload you require, you should request a signed URL from one of these two endpoints:</p>
-<h2 id='binary-data-file-upload'>Binary Data File Upload</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/uploads/new?filename=my_media.mp3"</span> <span class="se">\</span>
+<h2 id='binary-data-file-upload'>Binary Data File Upload</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.happyscribe.co/api/v1/uploads/new?filename=my_media.mp3"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span>
 
-</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/uploads/new?filename=my_media.mp3'</span><span class="p">,</span> <span class="p">{</span>
+</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://www.happyscribe.co/api/v1/uploads/new?filename=my_media.mp3'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">authorization</span><span class="p">:</span> <span class="s1">'Bearer **your_api_key_here**'</span><span class="p">,</span>
   <span class="p">}</span>
@@ -354,7 +354,7 @@ More information here: <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/
 
 <p>Once the file is uploaded, this same url should be used as the <code>tmp_url</code> when <a href="#create-a-new-transcription">creating the associated transcription.</a></p>
 <h3 id='http-request'>HTTP Request</h3>
-<p><code>GET https://happyscribe.co/api/v1/uploads/new</code></p>
+<p><code>GET https://www.happyscribe.co/api/v1/uploads/new</code></p>
 <h3 id='parameters'>Parameters</h3>
 <table><thead>
 <tr>
@@ -367,10 +367,10 @@ More information here: <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/
 <td>(required) The filename and extension of the media file (e.g. <code>my_media.mp3</code>)</td>
 </tr>
 </tbody></table>
-<h2 id='multipart-uploads'>Multipart Uploads</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/uploads/new?multipart=true"</span> <span class="se">\</span>
+<h2 id='multipart-uploads'>Multipart Uploads</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.happyscribe.co/api/v1/uploads/new?multipart=true"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span>
 
-</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/uploads/new?multipart=true'</span><span class="p">,</span> <span class="p">{</span>
+</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://www.happyscribe.co/api/v1/uploads/new?multipart=true'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">authorization</span><span class="p">:</span> <span class="s1">'Bearer **your_api_key_here**'</span><span class="p">,</span>
   <span class="p">}</span>
@@ -393,7 +393,7 @@ More information here: <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/
 <p>Once the file is uploaded, S3 will respond with a URL in the XML body, as well as in the headers.<br>
 You should use this URL as the <code>tmp_url</code> when <a href="#create-a-new-transcription">creating the associated transcription.</a>  </p>
 <h3 id='http-request-2'>HTTP Request</h3>
-<p><code>GET https://happyscribe.co/api/v1/uploads/new</code></p>
+<p><code>GET https://www.happyscribe.co/api/v1/uploads/new</code></p>
 <h3 id='parameters-2'>Parameters</h3>
 <table><thead>
 <tr>
@@ -406,9 +406,9 @@ You should use this URL as the <code>tmp_url</code> when <a href="#create-a-new-
 <td>(required) should be set to <code>true</code></td>
 </tr>
 </tbody></table>
-<h1 id='transcriptions'>Transcriptions</h1><h2 id='list-all-transcriptions'>List All Transcriptions</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions"</span> <span class="se">\</span>
+<h1 id='transcriptions'>Transcriptions</h1><h2 id='list-all-transcriptions'>List All Transcriptions</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.happyscribe.co/api/v1/transcriptions"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span>
-</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/transcriptions'</span><span class="p">,</span> <span class="p">{</span>
+</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://www.happyscribe.co/api/v1/transcriptions'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">authorization</span><span class="p">:</span> <span class="s1">'Bearer **your_api_key_here**'</span>
   <span class="p">}</span>
@@ -429,7 +429,7 @@ You should use this URL as the <code>tmp_url</code> when <a href="#create-a-new-
             </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en-GB"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
               </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/api/v1/transcriptions/e458099e7f8da14f9625854ba7b6a026917ad306"</span><span class="w">
+                </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.happyscribe.co/api/v1/transcriptions/e458099e7f8da14f9625854ba7b6a026917ad306"</span><span class="w">
               </span><span class="p">}</span><span class="w">
             </span><span class="p">}</span><span class="w">
         </span><span class="p">},</span><span class="w">
@@ -443,7 +443,7 @@ You should use this URL as the <code>tmp_url</code> when <a href="#create-a-new-
             </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en-GB"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
               </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/api/v1/transcriptions/9jossdjdf09j309omsldknslkjndfjknsdfs"</span><span class="w">
+                </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.happyscribe.co/api/v1/transcriptions/9jossdjdf09j309omsldknslkjndfjknsdfs"</span><span class="w">
               </span><span class="p">}</span><span class="w">
             </span><span class="p">}</span><span class="w">
         </span><span class="p">},</span><span class="w">
@@ -452,7 +452,7 @@ You should use this URL as the <code>tmp_url</code> when <a href="#create-a-new-
     </span><span class="s2">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
     </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="s2">"next"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/api/v1/transcriptions?page=2"</span><span class="w">
+        </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.happyscribe.co/api/v1/transcriptions?page=2"</span><span class="w">
       </span><span class="p">}</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -460,7 +460,7 @@ You should use this URL as the <code>tmp_url</code> when <a href="#create-a-new-
 </span></code></pre>
 <p>Returns a list of transcriptions you’ve previously created. The transcriptions are returned in sorted order, with the most recent charges appearing first. The information returned is metadata about each transcription, not the actual transcript. To retrieve a specific transcript you have to use the <a href="#export-a-transcription">export endpoint</a>.</p>
 <h3 id='http-request'>HTTP Request</h3>
-<p><code>GET https://happyscribe.co/api/v1/transcriptions</code></p>
+<p><code>GET https://www.happyscribe.co/api/v1/transcriptions</code></p>
 <h3 id='query-parameters'>Query Parameters</h3>
 <table><thead>
 <tr>
@@ -479,7 +479,7 @@ You should use this URL as the <code>tmp_url</code> when <a href="#create-a-new-
 <aside class="success">
 Remember — a happy scribe is an authenticated scribe!
 </aside>
-<h2 id='create-a-transcription'>Create a Transcription</h2><pre class="highlight shell tab-shell"><code>curl -X POST <span class="s2">"https://happyscribe.co/api/v1/transcriptions"</span> <span class="se">\</span>
+<h2 id='create-a-transcription'>Create a Transcription</h2><pre class="highlight shell tab-shell"><code>curl -X POST <span class="s2">"https://www.happyscribe.co/api/v1/transcriptions"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span> <span class="se">\</span>
   -H <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
   -d <span class="s1">'{
@@ -490,7 +490,7 @@ Remember — a happy scribe is an authenticated scribe!
       }
     }'</span>
 
-</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/transcriptions'</span><span class="p">,</span> <span class="p">{</span>
+</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://www.happyscribe.co/api/v1/transcriptions'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">method</span><span class="p">:</span> <span class="s1">'POST'</span><span class="p">,</span>
   <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">authorization</span><span class="p">:</span> <span class="s1">'Bearer **your_api_key_here**'</span><span class="p">,</span>
@@ -518,14 +518,14 @@ Remember — a happy scribe is an authenticated scribe!
   </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en-GB"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/api/v1/transcriptions/f6511f81s5611daede28dc85f25a796ae7996d11"</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.happyscribe.co/api/v1/transcriptions/f6511f81s5611daede28dc85f25a796ae7996d11"</span><span class="w">
     </span><span class="p">},</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint creates a new transcription. After a transcription is created, the system will proceed to automatically transcribe it. You can watch if the transcription process has finished by <a href="#retrieve-a-transcription">retrieving a transcription</a>.</p>
 <h3 id='http-request-2'>HTTP Request</h3>
-<p><code>POST https://happyscribe.co/api/v1/transcriptions</code></p>
+<p><code>POST https://www.happyscribe.co/api/v1/transcriptions</code></p>
 <h3 id='parameters'>Parameters</h3>
 <table><thead>
 <tr>
@@ -559,9 +559,9 @@ Once the file is copied and ingested, we no longer need access to the <code>tmp_
 <aside class="success">
 Before creating a transcription, your media file has to be uploaded. Refer to the <a href="/#uploads">uploads section</a> for uploading files directly to our server and other options.
 </aside>
-<h2 id='retrieve-a-transcription'>Retrieve a Transcription</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;"</span> <span class="se">\</span>
+<h2 id='retrieve-a-transcription'>Retrieve a Transcription</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.happyscribe.co/api/v1/transcriptions/&lt;ID&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span>
-</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;'</span><span class="p">,</span> <span class="p">{</span>
+</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://www.happyscribe.co/api/v1/transcriptions/&lt;ID&gt;'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">authorization</span><span class="p">:</span> <span class="s1">'Bearer **your_api_key_here**'</span>
   <span class="p">}</span>
@@ -580,20 +580,20 @@ Before creating a transcription, your media file has to be uploaded. Refer to th
   </span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"en-GB"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/api/v1/transcriptions/f6511f81156114aede28dc85325a796ae7996d11"</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.happyscribe.co/api/v1/transcriptions/f6511f81156114aede28dc85325a796ae7996d11"</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"editor"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/transcriptions/9josdjdfo09j309omsldknslkjndfjknsdfs/edit_v2"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.happyscribe.co/transcriptions/9josdjdfo09j309omsldknslkjndfjknsdfs/edit_v2"</span><span class="p">,</span><span class="w">
     </span><span class="p">},</span><span class="w">
     </span><span class="s2">"export"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">  
-      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://happyscribe.co/api/v1/transcriptions/f6511f81156114aede28dc85325a796ae7996d11/exports/new"</span><span class="w">
+      </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.happyscribe.co/api/v1/transcriptions/f6511f81156114aede28dc85325a796ae7996d11/exports/new"</span><span class="w">
     </span><span class="p">},</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint retrieves information about a specific transcription. To retrieve the transcript you have to use the <a href="#export-a-transcription">export endpoint</a>.</p>
 <h3 id='http-request-3'>HTTP Request</h3>
-<p><code>GET https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;</code></p>
+<p><code>GET https://www.happyscribe.co/api/v1/transcriptions/&lt;ID&gt;</code></p>
 <h3 id='transcription-state-descriptions'>Transcription State Descriptions</h3>
 <table><thead>
 <tr>
@@ -630,10 +630,10 @@ Before creating a transcription, your media file has to be uploaded. Refer to th
 <td>The initial demo file</td>
 </tr>
 </tbody></table>
-<h2 id='export-a-transcription'>Export a Transcription</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt"</span> <span class="se">\</span>
+<h2 id='export-a-transcription'>Export a Transcription</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://www.happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer **your_api_key_here**"</span> <span class="se">\</span>
   --output my_export.txt
-</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt'</span><span class="p">,</span> <span class="p">{</span>
+</code></pre><pre class="highlight javascript tab-javascript"><code><span class="nx">fetch</span><span class="p">(</span><span class="s1">'https://www.happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt'</span><span class="p">,</span> <span class="p">{</span>
   <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
     <span class="na">authorization</span><span class="p">:</span> <span class="s1">'Bearer **your_api_key_here**'</span>
   <span class="p">}</span>
@@ -647,7 +647,7 @@ Exports are sent to the client as binary data. You&#39;ll need to capture the ou
 To export a transcription it must have the <code>state</code> = <code>automatic_done</code>. You can check the state by <a href="#retrieve-a-transcription">retrieving the transcription metadata</a>.
 </aside>
 <h3 id='http-request-4'>HTTP Request</h3>
-<p><code>GET https://happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt</code></p>
+<p><code>GET https://www.happyscribe.co/api/v1/transcriptions/&lt;ID&gt;/export/new?format=txt</code></p>
 <h3 id='query-parameters-2'>Query Parameters</h3>
 <table><thead>
 <tr>
